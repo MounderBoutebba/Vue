@@ -5,7 +5,7 @@ import vuetextareaAutoSize from 'vue-textarea-autosize'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
-vuetextareaAutoSize.use(vuetextareaAutoSize);
+Vue.use(vuetextareaAutoSize);
 Vue.config.productionTip = false
 
 firebase.initializeApp({
