@@ -85,10 +85,11 @@
   </v-row>
 </template>
 <script>
+import { db } from "@/main";
 export default {
   data: () => ({
-    today: "2019-01-01",
-    focus: "2019-01-01",
+    today: new Date().toISOString().substring(0, 10),
+    focus: new Date().toISOString().substring(0, 10),
     type: "month",
     typeToLabel: {
       month: "Month",
@@ -96,12 +97,16 @@ export default {
       day: "Day",
       "4day": "4 Days"
     },
+    name: null,
+    details: null,
+    color: "#1976D2",
     start: null,
     end: null,
+    currentlyEditing: null,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
-    events: [
+    events1: [
       {
         name: "Vacation",
         details: "Going to the beach!",
@@ -227,7 +232,9 @@ export default {
         end: "2019-01-14 23:00",
         color: "#4285F4"
       }
-    ]
+    ],
+    events: [],
+    dialog: false
   }),
   computed: {
     title() {
@@ -266,9 +273,20 @@ export default {
     }
   },
   mounted() {
+    this.getEvents();
     this.$refs.calendar.checkChange();
   },
   methods: {
+    async getEvents() {
+      let snapshot = await db.collection("calEvent").get();
+      let events = [];
+      snapshot.forEach(doc => {
+        let appData = doc.data();
+        appData.id = doc.id;
+        events.push(appData);
+      });
+      this.events = events;
+    },
     viewDay({ date }) {
       this.focus = date;
       this.type = "day";
